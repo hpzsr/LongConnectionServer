@@ -1,0 +1,9 @@
+C:\Users\58225\Desktop\Long Connection\Long Connection\bin\Debug\Long Connection.exe.config
+C:\Users\58225\Desktop\Long Connection\Long Connection\bin\Debug\Long Connection.exe
+C:\Users\58225\Desktop\Long Connection\Long Connection\bin\Debug\Long Connection.pdb
+C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long Connection.csprojResolveAssemblyReference.cache
+C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long_Connection.Form1.resources
+C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long_Connection.Properties.Resources.resources
+C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long Connection.csproj.GenerateResource.Cache
+C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long Connection.exe
+C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long Connection.pdb
