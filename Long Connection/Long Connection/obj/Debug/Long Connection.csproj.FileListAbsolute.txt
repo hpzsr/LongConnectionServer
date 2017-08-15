@@ -7,3 +7,12 @@ C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long_Connection
 C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long Connection.csproj.GenerateResource.Cache
 C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long Connection.exe
 C:\Users\58225\Desktop\Long Connection\Long Connection\obj\Debug\Long Connection.pdb
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\bin\Debug\Long Connection.exe.config
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\bin\Debug\Long Connection.exe
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\bin\Debug\Long Connection.pdb
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\obj\Debug\Long Connection.csprojResolveAssemblyReference.cache
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\obj\Debug\Long_Connection.Form1.resources
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\obj\Debug\Long_Connection.Properties.Resources.resources
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\obj\Debug\Long Connection.csproj.GenerateResource.Cache
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\obj\Debug\Long Connection.exe
+E:\GitHub\LongConnectionServer\Long Connection\Long Connection\obj\Debug\Long Connection.pdb

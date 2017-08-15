@@ -68,7 +68,7 @@
             this.textBox_ipPort.Name = "textBox_ipPort";
             this.textBox_ipPort.Size = new System.Drawing.Size(100, 21);
             this.textBox_ipPort.TabIndex = 3;
-            this.textBox_ipPort.Text = "10002";
+            this.textBox_ipPort.Text = "10008";
             // 
             // button_start
             // 

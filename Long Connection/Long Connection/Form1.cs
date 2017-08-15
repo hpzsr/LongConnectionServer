@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -73,14 +74,14 @@ namespace Long_Connection
             }
             catch (SocketException ex)
             {
-                Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
         // 处理客户端请求
         void DoTaskClient(object socket)
         {
-            Console.WriteLine("获取客户端发起的请求");
+            Debug.WriteLine("获取客户端发起的请求");
 
             Socket socketback = (Socket)socket;
 
@@ -98,22 +99,22 @@ namespace Long_Connection
                 if (socketback != null && socketback.Connected)
                 {
                     int recelong = socketback.Receive(rece, rece.Length, 0);
-                    Console.WriteLine("22");
                     string reces = Encoding.ASCII.GetString(rece, 0, recelong);
                     // 解密
                     //reces = _3DES.DESDecrypst(reces);
 
-                    Console.WriteLine("客户端请求数据：" + reces);
+                    
+                    Debug.WriteLine("客户端请求数据：" + reces);
 
                     string backData = "hello client";
-                    Console.WriteLine("返回给客户端数据：" + backData);
+                    Debug.WriteLine("返回给客户端数据：" + backData);
 
                     // 发送消息
                     sendmessage(socketback, backData);
                 }
                 else
                 {
-                    Console.WriteLine("连接释放");
+                    Debug.WriteLine("连接释放");
                 }
             }
         }
