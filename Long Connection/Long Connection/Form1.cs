@@ -16,46 +16,78 @@ namespace Long_Connection
 {
     public partial class Form1 : Form
     {
-        Socket m_socket;
-        IPAddress m_ipAddress;
-        int m_ipPort;
+        Socket m_socket = null;
+        //IPAddress m_ipAddress = IPAddress.Parse("222.73.65.206");
+        //int m_ipPort = Convert.ToInt32("10103");
+        IPAddress m_ipAddress = IPAddress.Parse("127.0.0.1");
+        int m_ipPort = Convert.ToInt32("10008");
+
+        Socket m_socketClient = null;
 
         bool m_isStart = false;
 
         public Form1()
         {
             InitializeComponent();
+
+            Control.CheckForIllegalCrossThreadCalls = false;
+
+            this.button_fasong.Enabled = false;
+            this.button_stop.Enabled = false;
         }
 
+        // 启动监听
         private void button1_Click(object sender, EventArgs e)
         {
-            m_ipAddress = IPAddress.Parse(textBox_ipAddress.Text);
-            m_ipPort = Convert.ToInt32(textBox_ipPort.Text);
-
-            //MySqlUtil.getInstance().openDatabase("game");
-
             m_isStart = true;
 
             Thread t1 = new Thread(new ThreadStart(ListenClient));
             t1.Start();
 
-            ((Button)sender).Enabled = false;
-            button_stop.Enabled = true;
+            this.button_start.Enabled = false;
+            this.button_stop.Enabled = true;
+            this.button_fasong.Enabled = true;
         }
 
+        // 停止服务
         private void button2_Click(object sender, EventArgs e)
         {
-            m_isStart = false;
-            m_socket.Close();
-            //MySqlUtil.getInstance().closeDatabase();
+            Debug.WriteLine("服务端关闭");
 
-            ((Button)sender).Enabled = false;
-            button_start.Enabled = true;
+            m_isStart = false;
+
+            if (m_socket != null)
+            {
+                m_socket.Close();
+            }
+
+            if (m_socketClient != null)
+            {
+                m_socketClient.Close();
+            }
+
+            this.button_start.Enabled = true;
+            this.button_stop.Enabled = false;
+            this.button_fasong.Enabled = false;
+        }
+
+        // 发送消息
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            string backData = this.textBox_send.Text;
+            this.listBox_chat.Items.Add("        " + backData);
+
+            Debug.WriteLine("返回给客户端数据：" + backData);
+
+            // 发送消息
+            sendmessage(m_socketClient, backData);
         }
 
         // 监听客户端请求
         void ListenClient()
         {
+            Debug.WriteLine("启动成功，开始监听");
+
             try
             {
                 IPEndPoint iPEndPoint = new IPEndPoint(m_ipAddress, m_ipPort);
@@ -65,11 +97,18 @@ namespace Long_Connection
 
                 while (m_isStart)
                 {
-                    Socket socketback = m_socket.Accept();
-
-                    // 另开一个线程处理客户端的请求，防止阻塞
-                    Thread t1 = new Thread(new ParameterizedThreadStart(DoTaskClient));
-                    t1.Start(socketback);
+                    try
+                    {
+                        Socket socketback = m_socket.Accept();
+                        // 另开一个线程处理客户端的请求，防止阻塞
+                        Thread t1 = new Thread(new ParameterizedThreadStart(DoTaskClient));
+                        t1.Start(socketback);
+                    }
+                    catch (SocketException ex)
+                    {
+                        Debug.WriteLine("与客户端连接断开");
+                        Debug.WriteLine("错误日志：" + ex.Message);
+                    }
                 }
             }
             catch (SocketException ex)
@@ -83,34 +122,37 @@ namespace Long_Connection
         {
             Debug.WriteLine("获取客户端发起的请求");
 
-            Socket socketback = (Socket)socket;
+            m_socketClient = (Socket)socket;
 
             // 接收消息
-            receive(socketback);
-
-            //socketback.Close();
+            receive(m_socketClient);
         }
 
         public void receive(Socket socketback)
         {
             byte[] rece = new byte[1024];
-            while (true)
+            while (m_isStart)
             {
                 if (socketback != null && socketback.Connected)
                 {
-                    int recelong = socketback.Receive(rece, rece.Length, 0);
-                    string reces = Encoding.ASCII.GetString(rece, 0, recelong);
-                    // 解密
-                    //reces = _3DES.DESDecrypst(reces);
+                    try
+                    {
+                        int recelong = socketback.Receive(rece, rece.Length, 0);
+                        string reces = Encoding.UTF8.GetString(rece, 0, recelong);
+                        // 解密
+                        //reces = _3DES.DESDecrypst(reces);
 
-                    
-                    Debug.WriteLine("客户端请求数据：" + reces);
 
-                    string backData = "hello client";
-                    Debug.WriteLine("返回给客户端数据：" + backData);
+                        Debug.WriteLine("客户端请求数据：" + reces);
 
-                    // 发送消息
-                    sendmessage(socketback, backData);
+                        this.listBox_chat.Items.Add(reces);
+                    }
+                    catch (SocketException ex)
+                    {
+                        Debug.WriteLine("与客户端连接断开");
+                        Debug.WriteLine("错误日志：" + ex.Message);
+                        return;
+                    }
                 }
                 else
                 {
@@ -124,9 +166,17 @@ namespace Long_Connection
             // 加密
             //str = _3DES.DESEncrypt(str);
 
-            byte[] bytes = new byte[1024];
-            bytes = Encoding.ASCII.GetBytes(str);
-            socketback.Send(bytes);
+            try
+            {
+                byte[] bytes = new byte[1024];
+                bytes = Encoding.UTF8.GetBytes(str);
+                socketback.Send(bytes);
+            }
+            catch (SocketException ex)
+            {
+                Debug.WriteLine("与客户端连接断开");
+                Debug.WriteLine("错误日志：" + ex.Message);
+            }
         }
 
         void destroy()

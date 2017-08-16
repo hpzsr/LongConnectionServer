@@ -28,51 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox_ipAddress = new System.Windows.Forms.TextBox();
-            this.textBox_ipPort = new System.Windows.Forms.TextBox();
             this.button_start = new System.Windows.Forms.Button();
             this.button_stop = new System.Windows.Forms.Button();
+            this.button_fasong = new System.Windows.Forms.Button();
+            this.textBox_send = new System.Windows.Forms.TextBox();
+            this.listBox_chat = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(56, 69);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "地址";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(56, 113);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 12);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "端口";
-            // 
-            // textBox_ipAddress
-            // 
-            this.textBox_ipAddress.Location = new System.Drawing.Point(113, 59);
-            this.textBox_ipAddress.Name = "textBox_ipAddress";
-            this.textBox_ipAddress.Size = new System.Drawing.Size(100, 21);
-            this.textBox_ipAddress.TabIndex = 2;
-            this.textBox_ipAddress.Text = "127.0.0.1";
-            // 
-            // textBox_ipPort
-            // 
-            this.textBox_ipPort.Location = new System.Drawing.Point(113, 113);
-            this.textBox_ipPort.Name = "textBox_ipPort";
-            this.textBox_ipPort.Size = new System.Drawing.Size(100, 21);
-            this.textBox_ipPort.TabIndex = 3;
-            this.textBox_ipPort.Text = "10008";
             // 
             // button_start
             // 
-            this.button_start.Location = new System.Drawing.Point(58, 156);
+            this.button_start.Location = new System.Drawing.Point(63, 313);
             this.button_start.Name = "button_start";
             this.button_start.Size = new System.Drawing.Size(75, 23);
             this.button_start.TabIndex = 4;
@@ -82,7 +47,7 @@
             // 
             // button_stop
             // 
-            this.button_stop.Location = new System.Drawing.Point(170, 156);
+            this.button_stop.Location = new System.Drawing.Point(160, 313);
             this.button_stop.Name = "button_stop";
             this.button_stop.Size = new System.Drawing.Size(75, 23);
             this.button_stop.TabIndex = 5;
@@ -90,32 +55,55 @@
             this.button_stop.UseVisualStyleBackColor = true;
             this.button_stop.Click += new System.EventHandler(this.button2_Click);
             // 
+            // button_fasong
+            // 
+            this.button_fasong.Location = new System.Drawing.Point(236, 269);
+            this.button_fasong.Name = "button_fasong";
+            this.button_fasong.Size = new System.Drawing.Size(75, 23);
+            this.button_fasong.TabIndex = 6;
+            this.button_fasong.Text = "发送";
+            this.button_fasong.UseVisualStyleBackColor = true;
+            this.button_fasong.Click += new System.EventHandler(this.button1_Click_1);
+            // 
+            // textBox_send
+            // 
+            this.textBox_send.Location = new System.Drawing.Point(12, 269);
+            this.textBox_send.Name = "textBox_send";
+            this.textBox_send.Size = new System.Drawing.Size(208, 21);
+            this.textBox_send.TabIndex = 7;
+            // 
+            // listBox_chat
+            // 
+            this.listBox_chat.FormattingEnabled = true;
+            this.listBox_chat.ItemHeight = 12;
+            this.listBox_chat.Location = new System.Drawing.Point(12, 12);
+            this.listBox_chat.Name = "listBox_chat";
+            this.listBox_chat.Size = new System.Drawing.Size(299, 220);
+            this.listBox_chat.TabIndex = 8;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(323, 264);
+            this.ClientSize = new System.Drawing.Size(323, 348);
+            this.Controls.Add(this.listBox_chat);
+            this.Controls.Add(this.textBox_send);
+            this.Controls.Add(this.button_fasong);
             this.Controls.Add(this.button_stop);
             this.Controls.Add(this.button_start);
-            this.Controls.Add(this.textBox_ipPort);
-            this.Controls.Add(this.textBox_ipAddress);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "服务端";
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox_ipAddress;
-        private System.Windows.Forms.TextBox textBox_ipPort;
         private System.Windows.Forms.Button button_start;
         private System.Windows.Forms.Button button_stop;
+        private System.Windows.Forms.Button button_fasong;
+        private System.Windows.Forms.TextBox textBox_send;
+        private System.Windows.Forms.ListBox listBox_chat;
     }
 }
 
