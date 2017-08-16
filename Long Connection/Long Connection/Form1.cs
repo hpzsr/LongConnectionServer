@@ -168,9 +168,16 @@ namespace Long_Connection
 
             try
             {
-                byte[] bytes = new byte[1024];
-                bytes = Encoding.UTF8.GetBytes(str);
-                socketback.Send(bytes);
+                if (socketback != null)
+                {
+                    byte[] bytes = new byte[1024];
+                    bytes = Encoding.UTF8.GetBytes(str);
+                    socketback.Send(bytes);
+                }
+                else
+                {
+                    Debug.WriteLine("错误：socketClient为空");
+                }
             }
             catch (SocketException ex)
             {
