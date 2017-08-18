@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,15 +19,14 @@ namespace Long_Connection
     {
         Socket m_socket = null;
         //IPAddress m_ipAddress = IPAddress.Parse("222.73.65.206");
-        //int m_ipPort = Convert.ToInt32("10103");
         IPAddress m_ipAddress = IPAddress.Parse("127.0.0.1");
-        int m_ipPort = Convert.ToInt32("10008");
-
-        //Socket m_socketClient = null;
-        List<ClientSocket> m_clientSocketList = new List<ClientSocket>();
+        int m_ipPort = Convert.ToInt32("10103");
+        
+        List<ClientData> m_clientDataList = new List<ClientData>();
 
         bool m_isStart = false;
         int m_clientCount = 0;
+        System.Threading.Timer m_timer;
 
         public Form1()
         {
@@ -63,16 +63,16 @@ namespace Long_Connection
                 m_socket.Close();
             }
 
-            for (int i = 0; i < m_clientSocketList.Count; i++)
+            for (int i = 0; i < m_clientDataList.Count; i++)
             {
-                if (m_clientSocketList[i].m_clientSocket != null)
+                if (m_clientDataList[i].m_clientData != null)
                 {
-                    m_clientSocketList[i].m_clientSocket.Close();
+                    m_clientDataList[i].m_clientData.Close();
                 }
             }
 
-            m_clientSocketList.Clear();
-            this.label_peopleNum.Text = "人数:" + m_clientSocketList.Count.ToString();
+            m_clientDataList.Clear();
+            this.label_peopleNum.Text = "人数:" + m_clientDataList.Count.ToString();
 
             this.button_start.Enabled = true;
             this.button_stop.Enabled = false;
@@ -82,7 +82,7 @@ namespace Long_Connection
         // 发送消息
         private void button1_Click_1(object sender, EventArgs e)
         {
-            if (m_clientSocketList.Count <= 0)
+            if (m_clientDataList.Count <= 0)
             {
                 Debug.WriteLine("现在没有客户端连接");
 
@@ -95,9 +95,9 @@ namespace Long_Connection
             Debug.WriteLine("返回给客户端数据：" + backData);
 
             // 发送消息
-            for (int i = 0; i < m_clientSocketList.Count; i++)
+            for (int i = 0; i < m_clientDataList.Count; i++)
             {
-                sendmessage(m_clientSocketList[i], backData);
+                sendmessage(m_clientDataList[i], backData);
             }
         }
 
@@ -119,13 +119,39 @@ namespace Long_Connection
                     {
                         Socket socketback = m_socket.Accept();
 
-                        ClientSocket clientSocket = new ClientSocket((++m_clientCount).ToString(), socketback);
-                        m_clientSocketList.Add(clientSocket);
-                        this.label_peopleNum.Text = "人数:" + m_clientSocketList.Count.ToString();
+                        ClientData clientData = new ClientData((++m_clientCount).ToString(), socketback);
+                        if (m_clientDataList.Count == 1)
+                        {
+                            clientData.m_data = ((int)Consts_Code.HeroAction.HeroAction_Idle).ToString() + ";90";
+                        }
+                        else if (m_clientDataList.Count == 2)
+                        {
+                            clientData.m_data = ((int)Consts_Code.HeroAction.HeroAction_Idle).ToString() + ";-90";
+                        }
+                        m_clientDataList.Add(clientData);
+                        this.label_peopleNum.Text = "人数:" + m_clientDataList.Count.ToString();
+
+                        // 发送玩家的初始状态信息：位置、角度
+                        {
+                            JObject jo = new JObject();
+                            jo.Add("tag", "InitGame");
+                            jo.Add("data", clientData.m_data);
+                            sendmessage(clientData, jo.ToString());
+                        }
 
                         // 另开一个线程处理客户端的请求，防止阻塞
                         Thread t1 = new Thread(new ParameterizedThreadStart(DoTaskClient));
-                        t1.Start(clientSocket);
+                        t1.Start(clientData);
+
+
+                        // 检测人是否已经齐了
+                        {
+                            if (m_clientDataList.Count == 2)
+                            {
+                                Thread t2 = new Thread(peopleAllIn);
+                                t2.Start();
+                            }
+                        }
                     }
                     catch (SocketException ex)
                     {
@@ -141,28 +167,52 @@ namespace Long_Connection
         }
 
         // 处理客户端请求
-        void DoTaskClient(object clientSocket)
+        void DoTaskClient(object clientData)
         {
             Debug.WriteLine("获取客户端发起的请求");
 
             // 接收消息
-            receive((ClientSocket)clientSocket);
+            receive((ClientData)clientData);
         }
 
-        public void receive(ClientSocket clientSocket)
+        void peopleAllIn()
+        {
+            m_timer = new System.Threading.Timer(callClient, "", 1000, 1000 / 30);
+        }
+
+        // 主动联系客户端
+        void callClient(object data)
+        {
+            JArray ja = new JArray();
+
+            for (int i = 0; i < m_clientDataList.Count; i++)
+            {
+                JObject jo = new JObject();
+                jo.Add("id", m_clientDataList[i].m_id);
+                jo.Add("data", m_clientDataList[i].m_data);
+                ja.Add(jo);
+            }
+
+            // 发送消息
+            for (int i = 0; i < m_clientDataList.Count; i++)
+            {
+                sendmessage(m_clientDataList[i], ja.ToString());
+            }
+        }
+
+        public void receive(ClientData clientData)
         {
             byte[] rece = new byte[1024];
             while (m_isStart)
             {
-                if (clientSocket.m_clientSocket != null && clientSocket.m_clientSocket.Connected)
+                if (clientData.m_clientData != null && clientData.m_clientData.Connected)
                 {
                     try
                     {
-                        int recelong = clientSocket.m_clientSocket.Receive(rece, rece.Length, 0);
+                        int recelong = clientData.m_clientData.Receive(rece, rece.Length, 0);
                         string reces = Encoding.UTF8.GetString(rece, 0, recelong);
                         // 解密
                         //reces = _3DES.DESDecrypst(reces);
-
 
                         Debug.WriteLine("客户端请求数据：" + reces);
 
@@ -170,10 +220,10 @@ namespace Long_Connection
                     }
                     catch (SocketException ex)
                     {
-                        m_clientSocketList.Remove(clientSocket);
-                        this.label_peopleNum.Text = "人数:" + m_clientSocketList.Count.ToString();
+                        m_clientDataList.Remove(clientData);
+                        this.label_peopleNum.Text = "人数:" + m_clientDataList.Count.ToString();
 
-                        Debug.WriteLine("与客户端连接断开:"+ clientSocket.m_id);
+                        Debug.WriteLine("与客户端连接断开:"+ clientData.m_id);
                         Debug.WriteLine("错误日志：" + ex.Message);
                         return;
                     }
@@ -185,18 +235,18 @@ namespace Long_Connection
             }
         }
 
-        public void sendmessage(ClientSocket clientSocket, string str)
+        public void sendmessage(ClientData clientData, string str)
         {
             // 加密
             //str = _3DES.DESEncrypt(str);
 
             try
             {
-                if (clientSocket.m_clientSocket != null)
+                if (clientData.m_clientData != null)
                 {
                     byte[] bytes = new byte[1024];
                     bytes = Encoding.UTF8.GetBytes(str);
-                    clientSocket.m_clientSocket.Send(bytes);
+                    clientData.m_clientData.Send(bytes);
                 }
                 else
                 {
@@ -205,10 +255,10 @@ namespace Long_Connection
             }
             catch (SocketException ex)
             {
-                m_clientSocketList.Remove(clientSocket);
-                this.label_peopleNum.Text = "人数:" + m_clientSocketList.Count.ToString();
+                m_clientDataList.Remove(clientData);
+                this.label_peopleNum.Text = "人数:" + m_clientDataList.Count.ToString();
 
-                Debug.WriteLine("与客户端连接断开:" + clientSocket.m_id);
+                Debug.WriteLine("与客户端连接断开:" + clientData.m_id);
                 Debug.WriteLine("错误日志：" + ex.Message);
             }
         }
@@ -224,11 +274,11 @@ namespace Long_Connection
                 m_socket.Close();
             }
 
-            for (int i = 0; i < m_clientSocketList.Count; i++)
+            for (int i = 0; i < m_clientDataList.Count; i++)
             {
-                if (m_clientSocketList[i].m_clientSocket != null)
+                if (m_clientDataList[i].m_clientData != null)
                 {
-                    m_clientSocketList[i].m_clientSocket.Close();
+                    m_clientDataList[i].m_clientData.Close();
                 }
             }
         }
@@ -241,14 +291,15 @@ namespace Long_Connection
     }
 }
 
-public class ClientSocket
+public class ClientData
 {
     public string m_id = "";
-    public Socket m_clientSocket = null;
-
-    public ClientSocket(string id, Socket clientSocket)
+    public string m_data = "";
+    public Socket m_clientData = null;
+    
+    public ClientData(string id, Socket clientData)
     {
         m_id = id;
-        m_clientSocket = clientSocket;
+        m_clientData = clientData;
     }
 };
