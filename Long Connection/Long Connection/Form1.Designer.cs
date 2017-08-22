@@ -34,6 +34,7 @@
             this.textBox_send = new System.Windows.Forms.TextBox();
             this.listBox_chat = new System.Windows.Forms.ListBox();
             this.label_peopleNum = new System.Windows.Forms.Label();
+            this.label_roomNum = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button_start
@@ -86,18 +87,30 @@
             // 
             this.label_peopleNum.AutoSize = true;
             this.label_peopleNum.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label_peopleNum.Location = new System.Drawing.Point(380, 115);
+            this.label_peopleNum.Location = new System.Drawing.Point(381, 162);
             this.label_peopleNum.Name = "label_peopleNum";
             this.label_peopleNum.Size = new System.Drawing.Size(56, 16);
             this.label_peopleNum.TabIndex = 9;
             this.label_peopleNum.Text = "人数:0";
             this.label_peopleNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // label_roomNum
+            // 
+            this.label_roomNum.AutoSize = true;
+            this.label_roomNum.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_roomNum.Location = new System.Drawing.Point(381, 127);
+            this.label_roomNum.Name = "label_roomNum";
+            this.label_roomNum.Size = new System.Drawing.Size(56, 16);
+            this.label_roomNum.TabIndex = 10;
+            this.label_roomNum.Text = "房间:0";
+            this.label_roomNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(463, 348);
+            this.Controls.Add(this.label_roomNum);
             this.Controls.Add(this.label_peopleNum);
             this.Controls.Add(this.listBox_chat);
             this.Controls.Add(this.textBox_send);
@@ -105,6 +118,7 @@
             this.Controls.Add(this.button_stop);
             this.Controls.Add(this.button_start);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "服务端";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
@@ -119,6 +133,7 @@
         private System.Windows.Forms.TextBox textBox_send;
         private System.Windows.Forms.ListBox listBox_chat;
         private System.Windows.Forms.Label label_peopleNum;
+        private System.Windows.Forms.Label label_roomNum;
     }
 }
 
