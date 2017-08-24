@@ -28,7 +28,7 @@ namespace Long_Connection
         
         //System.Threading.Timer m_timer;
 
-        int m_frameRate = 30;
+        int m_frameRate = 60;
 
         public Form1()
         {
@@ -317,11 +317,13 @@ namespace Long_Connection
                 if (list.Count == 0)
                 {
                     Debug.WriteLine("房间人数为0，释放该房间");
+                    this.listBox_chat.Items.Add("房间人数为0，释放该房间");
                     m_RoomList.Remove(list);
                 }
 
                 Debug.WriteLine("与客户端连接断开:" + clientData.m_id);
                 Debug.WriteLine("错误日志：" + ex.Message);
+                this.listBox_chat.Items.Add("与客户端连接断开:" + clientData.m_id);
             }
         }
 
@@ -535,6 +537,7 @@ namespace Long_Connection
             }
 
             Debug.WriteLine("有人掉线，该房间同步结束");
+            this.listBox_chat.Items.Add("有人掉线，该房间同步结束");
         }
 
         void setUiPeopleNum()
